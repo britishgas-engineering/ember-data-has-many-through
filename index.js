@@ -2,7 +2,7 @@
 'use strict';
 
 module.exports = {
-  name: 'ember-cli-has-many-through',
+  name: 'ember-data-has-many-through',
   isDevelopingAddon: function () {
     return true;
   }

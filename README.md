@@ -1,4 +1,4 @@
-# Ember-cli-has-many-through
+# Ember-data-has-many-through
 
 A small Addon to forward hasMany of hasMany relationships to the grand-parent.
 
