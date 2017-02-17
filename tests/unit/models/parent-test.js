@@ -204,8 +204,8 @@ test('hasManyThroughNonOject on hasMany of several hasMany', function (assert) {
     child2 = store.createRecord('child');
     let arrayOfChildOfChild = ['childOfChild1', 'childOfChild2', 'childOfChild3'];
     parent.get('children').then((children) => {
-      child1.get('simpleArray').pushObjects(['childOfChild1', 'childOfChild2']);
-      child2.get('simpleArray').pushObjects(['childOfChild2', 'childOfChild3']);
+      child1.set('simpleArray', ['childOfChild1', 'childOfChild2']);
+      child2.set('simpleArray', ['childOfChild2', 'childOfChild3']);
       children.pushObjects([child1, child2]);
       return parent.get('simpleArray');
     }).then((res) => {
@@ -227,6 +227,43 @@ test('hasManyThroughNonOject on hasMany of several hasMany', function (assert) {
         parent.get('simpleArray.content'),
         ['childOfChild2', 'childOfChild3'],
         'the hasManyThrough property removes destroyed records'
+      )
+    });
+  });
+});
+
+test('concat', function (assert) {
+  let store = this.store(),
+    child1, child2, parent;
+  parent = this.subject();
+  Ember.run(() => {
+    child1 = store.createRecord('child');
+    child2 = store.createRecord('child');
+    let arrayOfChildOfChild = ['childOfChild1', 'childOfChild2', 'childOfChild2', 'childOfChild3'];
+    parent.get('children').then((children) => {
+      child1.set('simpleArray', ['childOfChild1', 'childOfChild2']);
+      child2.set('simpleArray', ['childOfChild2', 'childOfChild3']);
+      children.pushObjects([child1, child2]);
+      return parent.get('concatArray');
+    }).then((res) => {
+      assert.deepEqual(
+        res,
+        arrayOfChildOfChild,
+        'the concat property forwards the hasMany of two hasMany children'
+      );
+      assert.equal(
+        res.get('length'),
+        4,
+        'the concat property does not remove duplicates from the final array'
+      );
+    }).then(() => {
+        child1.get('simpleArray').removeObject('childOfChild1');
+        return parent.get('simpleArray');
+    }).then(() => {
+      assert.deepEqual(
+        parent.get('simpleArray.content'),
+        ['childOfChild2', 'childOfChild3'],
+        'the concat property removes destroyed records'
       )
     });
   });
