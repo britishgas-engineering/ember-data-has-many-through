@@ -1,9 +1,9 @@
 # Ember-data-has-many-through
 
 A small Addon to concatenate array of arrays, including promiseArrays / Ember Data hasMany relationships, it provides three macros:
-* `concat` allows to concatenate (Ember) arrays of (Ember) arrays.
-* `hasManyThroughNonObject` allows to concatenate (Ember) arrays of hasMany relationships.
-* `hasManyThrough` allows to concatenate hasMany relationships (or arrays of Ember Objects) of hasMany relationships.
+* `concat` allows to concatenate arrays of Ember Objects containing arrays.
+* `hasManyThroughNonObject` allows to concatenate hasMany relationships containing arrays.
+* `hasManyThrough` allows to concatenate hasMany relationships (or arrays of Ember Objects) containing hasMany relationships.
 
 ## concat
 
@@ -16,7 +16,7 @@ import concat from 'dummy/macros/concat';
 
 export default DS.Model.extend({
   children: DS.hasMany('child'),
-  // or any other Ember Array
+  // or any other Array of Ember Objects containing arrays
   filteredChildren: computed.filterBy('children', 'filterMe', true),
   concatArray: concat('filteredChildren', 'simpleArray')
 });
