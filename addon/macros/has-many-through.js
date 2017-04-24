@@ -37,7 +37,7 @@ export default function (...args) {
 
           all.pushObject(
             prom.then((childrenOfChild) => {
-              res.pushObjects(childrenOfChild.toArray());
+              res.pushObjects(childrenOfChild.toArray ? childrenOfChild.toArray() : [childrenOfChild]);
             })
           );
         });
