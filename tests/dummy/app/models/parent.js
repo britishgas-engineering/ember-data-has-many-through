@@ -10,6 +10,8 @@ export default DS.Model.extend({
   childrenOfChild: hasManyThrough('children'),
   childrenOfChildren: hasManyThrough('children', 'childrenOfChild'),
   childrenOfChildArray: hasManyThrough('children'),
+  singleChildOfChild: hasManyThrough('children'),
+  singleChildOfChildren: hasManyThrough('children', 'singleChildOfChild'),
   simpleArray: hasManyThroughNonObject('children'),
   filteredChildren: computed.filterBy('children', 'filterMe', true),
   concatArray: concat('filteredChildren', 'simpleArray')
