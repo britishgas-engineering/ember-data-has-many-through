@@ -16,6 +16,67 @@ test('it exists', function (assert) {
   assert.ok(!!model);
 });
 
+test('hasManyThrough on belongsTo of one hasMany', function (assert) {
+  let store = this.store(),
+    childOfChild1, child1, child2, parent;
+  parent = this.subject();
+  Ember.run(() => {
+    childOfChild1 = store.createRecord('child-of-child');
+    child1 = store.createRecord('child');
+    child2 = store.createRecord('child');
+    parent.get('children').then((children) => {
+      let arrayOfChildOfChild = [childOfChild1];
+
+      child1.set('singleChildOfChild', childOfChild1);
+      children.pushObject(child1);
+      parent.get('singleChildOfChild').then((res) => {
+        assert.deepEqual(
+          res,
+          arrayOfChildOfChild,
+          'the hasManyThrough property forwards the belongsTo of one hasMany child'
+        );
+        assert.deepEqual(
+          parent.get('singleChildOfChild.content'),
+          arrayOfChildOfChild,
+          'the hasManyThrough property is a promiseArray'
+        );
+      });
+      parent.get('singleChildOfChildren').then((res) => {
+        assert.deepEqual(
+          res,
+          arrayOfChildOfChild,
+          'the hasManyThrough property can be aliased to another property name'
+        );
+      });
+      Ember.RSVP.all([
+        parent.get('singleChildOfChild'),
+        parent.get('singleChildOfChildren')
+      ]).then(() => {
+        children.pushObject(child2);
+        parent.get('singleChildOfChild').then((res) => {
+          assert.deepEqual(
+            res,
+            arrayOfChildOfChild,
+            'the hasManyThrough property forwards the belongsTo of one hasMany child after adding a record without related child on belongsTo'
+          );
+          assert.deepEqual(
+            parent.get('singleChildOfChild.content'),
+            arrayOfChildOfChild,
+            'the hasManyThrough property is a promiseArray after adding a record without related child on belongsTo'
+          );
+        });
+        parent.get('singleChildOfChildren').then((res) => {
+          assert.deepEqual(
+            res,
+            arrayOfChildOfChild,
+            'the hasManyThrough property can be aliased to another property name after adding a record without related child on belongsTo'
+          );
+        });
+      });
+    });
+  });
+});
+
 test('hasManyThrough on hasMany of one hasMany', function (assert) {
   let store = this.store(),
     childOfChild1, childOfChild2, child, parent;
