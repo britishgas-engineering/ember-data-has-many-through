@@ -27,7 +27,8 @@ export default function (...args) {
     return DS.PromiseArray.create({
       promise: this.get(childKey).then((children) => {
         let all = [],
-          res = [];
+          res = [],
+          isBelongsTo;
         children.forEach((child) => {
           // takes into account the case where the hasMany on the child
           // is not a promise (MF.Array for example)
@@ -37,15 +38,25 @@ export default function (...args) {
 
           all.pushObject(
             prom.then((childrenOfChild) => {
-              res.pushObjects(childrenOfChild.toArray ? childrenOfChild.toArray() : [childrenOfChild]);
+              if (childrenOfChild) {
+                isBelongsTo = !childrenOfChild.toArray;
+                res.pushObjects(isBelongsTo ? [childrenOfChild] : childrenOfChild.toArray());
+              } else {
+                isBelongsTo=true;
+              }
             })
           );
         });
         return RSVP.all(all).then(() => {
           children.forEach((child) => {
             // add observer for when a childOfChild is added / destroyed
-            child.removeObserver(`${childOfChildKey}.@each.isDeleted`, self, observerFunction);
-            child.addObserver(`${childOfChildKey}.@each.isDeleted`, self, observerFunction);
+            if (isBelongsTo) {
+              child.removeObserver(`${childOfChildKey}.isDeleted`, self, observerFunction);
+              child.addObserver(`${childOfChildKey}.isDeleted`, self, observerFunction);
+            } else {
+              child.removeObserver(`${childOfChildKey}.@each.isDeleted`, self, observerFunction);
+              child.addObserver(`${childOfChildKey}.@each.isDeleted`, self, observerFunction);
+            }
           });
           // remove duplicates
           return res.filter(function (item, pos) {
