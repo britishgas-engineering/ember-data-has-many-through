@@ -61,7 +61,8 @@ export default function (...args) {
           // remove duplicates
           return res.filter(function (item, pos) {
             return res.indexOf(item) === pos
-            && (!item.isDeleted || !item.get('isDeleted'));
+            && (!item.isDeleted || !item.get('isDeleted'))
+            && !item.isDestroyed//ED 2.14.10
           });
         });
       })
