@@ -1,6 +1,6 @@
-import Ember from 'ember';
+import { computed } from '@ember/object';
+import RSVP from 'rsvp';
 import DS from 'ember-data';
-const {computed, RSVP} = Ember;
 
 /**
   @method hasManyThrough

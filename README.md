@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Ember-data-has-many-through
 
 A small Addon to concatenate array of arrays, including promiseArrays / Ember Data hasMany relationships, it provides three macros:
@@ -99,26 +100,34 @@ export default DS.Model.extend({});
 ``````
 
 See the `test/dummy app` for further details.
+=======
+my-addon
+==============================================================================
 
-## Installation
+[Short description of the addon.]
+>>>>>>> 0888853... message
 
-* `git clone` this repository
-* `npm install`
-* `bower install`
+Installation
+------------------------------------------------------------------------------
 
-## Running
+```
+ember install my-addon
+```
 
-* `ember serve`
-* Visit your app at http://localhost:4200.
 
-## Running Tests
+Usage
+------------------------------------------------------------------------------
 
+[Longer description of how to use the addon in apps.]
+
+<<<<<<< HEAD
 * `npm test` (Runs `ember try:testall` to test your Addon against multiple Ember versions)
 * `ember test`
 * `ember test --server`
+=======
+>>>>>>> 0888853... message
 
-## Building
+License
+------------------------------------------------------------------------------
 
-* `ember build`
-
-For more information on using ember-cli, visit [http://ember-cli.com/](http://ember-cli.com/).
+This project is licensed under the [MIT License](LICENSE.md).
