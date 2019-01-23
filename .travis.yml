@@ -28,6 +28,8 @@ env:
     - EMBER_TRY_SCENARIO=ember-beta
     - EMBER_TRY_SCENARIO=ember-canary
     - EMBER_TRY_SCENARIO=ember-default
+    - EMBER_TRY_SCENARIO=ember-data-3-1
+    - EMBER_TRY_SCENARIO=ember-data-3-2
 
 matrix:
   fast_finish: true
