@@ -50,24 +50,12 @@ export default function (...args) {
         return RSVP.all(all).then(() => {
           children.forEach((child) => {
             // add observer for when a childOfChild is added / destroyed
-            if (!child.isDestroyed && !child.get('isDeleted') && !this.isDestroyed && !this.get('isDeleted')) {
-              if (isBelongsTo) {
-                child.removeObserver(`${childOfChildKey}.isDeleted`, self, observerFunction);
-                child.addObserver(`${childOfChildKey}.isDeleted`, self, observerFunction);
-              } else {
-                // const childrenOfChild = child.get(childOfChildKey);;
-                // const childrenOfChildDeleted = childrenOfChild.filter(function (item, pos) {
-                //   return childrenOfChild.indexOf(item) === pos
-                //   && item.isDeleted && item.get('isDeleted')
-                // });
-                // console.log('childrenOfChildDeleted', childrenOfChildDeleted);
-                // childrenOfChild.removeObjects(childrenOfChildDeleted);
-                // if (childrenOfChildDeleted.length) {
-                //   debugger;
-                // }
-                child.removeObserver(`${childOfChildKey}.@each.isDeleted`, self, observerFunction);
-                child.addObserver(`${childOfChildKey}.@each.isDeleted`, self, observerFunction);
-              }
+            if (isBelongsTo) {
+              child.removeObserver(`${childOfChildKey}.isDeleted`, self, observerFunction);
+              child.addObserver(`${childOfChildKey}.isDeleted`, self, observerFunction);
+            } else {
+              child.removeObserver(`${childOfChildKey}.@each.isDeleted`, self, observerFunction);
+              child.addObserver(`${childOfChildKey}.@each.isDeleted`, self, observerFunction);
             }
           });
           // remove duplicates
