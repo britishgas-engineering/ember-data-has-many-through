@@ -29,7 +29,6 @@ export default function (...args) {
         let all = [],
           res = [],
           isBelongsTo;
-          debugger; // eslint-disable-line
         children.forEach((child) => {
           // takes into account the case where the hasMany on the child
           // is not a promise (MF.Array for example)
