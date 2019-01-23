@@ -1,8 +1,9 @@
+import { all } from 'rsvp';
+import { run } from '@ember/runloop';
 import {
   moduleForModel,
   test
 } from 'ember-qunit';
-import Ember from 'ember';
 
 moduleForModel('author', 'Unit | Model | author', {
   needs: [
@@ -20,7 +21,7 @@ test('hasManyThrough on hasMany of one hasMany', function (assert) {
   let store = this.store(),
     chapter1, chapter2, book, author;
   author = this.subject();
-  Ember.run(() => {
+  run(() => {
     chapter1 = store.createRecord('chapter');
     chapter2 = store.createRecord('chapter');
     book = store.createRecord('book');
@@ -62,7 +63,7 @@ test('hasManyThrough on hasMany of one hasMany', function (assert) {
             'the hasManyThrough property can be aliased to another property name'
           );
         });
-        Ember.RSVP.all([
+        all([
           author.get('chapters'),
           author.get('chaptersArray'),
           author.get('chapters')
@@ -112,7 +113,7 @@ test('hasManyThrough on hasMany of several hasMany', function (assert) {
   let store = this.store(),
     book1, book2, chapter1, chapter2, chapter3, author;
   author = this.subject();
-  Ember.run(() => {
+  run(() => {
     chapter1 = store.createRecord('chapter');
     chapter2 = store.createRecord('chapter');
     chapter3 = store.createRecord('chapter');
@@ -130,7 +131,7 @@ test('hasManyThrough on hasMany of several hasMany', function (assert) {
           book2.get('chaptersArray').pushObjects([chapter2, chapter3]);
         })
       ];
-      return Ember.RSVP.all(prom).then(() => {
+      return all(prom).then(() => {
         books.pushObjects([book1, book2]);
         return author.get('chapters');
       });
@@ -199,7 +200,7 @@ test('hasManyThrough on hasMany of one or zero belongsTo', function (assert) {
   let store = this.store(),
     book1, book2, chapter1, chapter2, author;
   author = this.subject();
-  Ember.run(() => {
+  run(() => {
     chapter1 = store.createRecord('chapter');
     chapter2 = store.createRecord('chapter');
     book1 = store.createRecord('book');
@@ -246,7 +247,7 @@ test('hasManyThroughNonOject on hasMany of several hasMany', function (assert) {
   let store = this.store(),
     book1, book2, author;
   author = this.subject();
-  Ember.run(() => {
+  run(() => {
     book1 = store.createRecord('book');
     book2 = store.createRecord('book');
     let arrayOfChapter = ['chapter1', 'chapter2', 'chapter3'];
@@ -283,7 +284,7 @@ test('concat', function (assert) {
   let store = this.store(),
     chapter1, chapter2, author;
   author = this.subject();
-  Ember.run(() => {
+  run(() => {
     chapter1 = store.createRecord('book');
     chapter2 = store.createRecord('book');
     let arrayOfChapter = ['chapter1', 'chapter2', 'chapter2', 'chapter3'];
