@@ -1,7 +1,7 @@
 {
   "name": "ember-data-has-many-through",
-  "version": "0.0.0",
-  "description": "The default blueprint for ember-cli addons.",
+  "version": "1.0.10",
+  "description": "A small Addon to forward hasMany of hasMany relationships to the grand-parent.",
   "keywords": [
     "ember-addon"
   ],
@@ -30,7 +30,7 @@
     "ember-cli-htmlbars": "^2.0.1",
     "ember-cli-htmlbars-inline-precompile": "^1.0.0",
     "ember-cli-inject-live-reload": "^1.4.1",
-    "ember-data": "^2.7.0",
+    "ember-data": "^2.18.0",
     "ember-cli-qunit": "^4.1.1",
     "ember-cli-shims": "^1.2.0",
     "ember-cli-sri": "^2.1.0",
