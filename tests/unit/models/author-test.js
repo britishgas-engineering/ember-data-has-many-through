@@ -1,8 +1,10 @@
+import { all } from 'rsvp';
+import { run } from '@ember/runloop';
 import {
   moduleForModel,
   test
 } from 'ember-qunit';
-import Ember from 'ember';
+import wait from 'ember-test-helpers/wait';
 
 moduleForModel('author', 'Unit | Model | author', {
   needs: [
@@ -11,27 +13,22 @@ moduleForModel('author', 'Unit | Model | author', {
   ]
 });
 
-test('it exists', function (assert) {
-  var model = this.subject();
-  assert.ok(!!model);
-});
-
 test('hasManyThrough on hasMany of one hasMany', function (assert) {
   let store = this.store(),
     chapter1, chapter2, book, author;
   author = this.subject();
-  Ember.run(() => {
+  run(() => {
     chapter1 = store.createRecord('chapter');
     chapter2 = store.createRecord('chapter');
     book = store.createRecord('book');
-    author.get('books').then((books) => {
-      book.get('chapters').then((chapters) => {
-        let arrayOfChapter = [chapter1];
+    return author.get('books').then((books) => {
+      return book.get('chapters').then((chapters) => {
+        const arrayOfChapter = [chapter1];
 
         chapters.pushObjects(arrayOfChapter);
         book.get('chaptersArray').pushObjects(arrayOfChapter);
         books.pushObject(book);
-        author.get('chapters').then((res) => {
+        return author.get('chapters').then((res) => {
           assert.deepEqual(
             res,
             arrayOfChapter,
@@ -42,8 +39,8 @@ test('hasManyThrough on hasMany of one hasMany', function (assert) {
             arrayOfChapter,
             'the hasManyThrough property is a promiseArray'
           );
-        });
-        author.get('chaptersArray').then((res) => {
+          return author.get('chaptersArray');
+        }).then((res) => {
           assert.deepEqual(
             res,
             arrayOfChapter,
@@ -54,24 +51,24 @@ test('hasManyThrough on hasMany of one hasMany', function (assert) {
             arrayOfChapter,
             'the hasManyThrough property is a promiseArray'
           );
-        });
-        author.get('chapters').then((res) => {
+          return author.get('chapters');
+        }).then((res) => {
           assert.deepEqual(
             res,
             arrayOfChapter,
             'the hasManyThrough property can be aliased to another property name'
           );
-        });
-        Ember.RSVP.all([
-          author.get('chapters'),
-          author.get('chaptersArray'),
-          author.get('chapters')
-        ]).then(() => {
-          arrayOfChapter = [chapter1, chapter2];
+          return all([
+            author.get('chapters'),
+            author.get('chaptersArray'),
+            author.get('chapters')
+          ]);
+        }).then(() => {
+          const arrayOfChapter = [chapter1, chapter2];
           chapters.pushObjects(arrayOfChapter);
           book.get('chaptersArray').pushObjects(arrayOfChapter);
           books.pushObject(book);
-          author.get('chapters').then((res) => {
+          return author.get('chapters').then((res) => {
             assert.deepEqual(
               res,
               arrayOfChapter,
@@ -82,8 +79,8 @@ test('hasManyThrough on hasMany of one hasMany', function (assert) {
               arrayOfChapter,
               'the hasManyThrough property is a promiseArray after adding a record'
             );
-          });
-          author.get('chaptersArray').then((res) => {
+            return author.get('chaptersArray');
+          }).then((res) => {
             assert.deepEqual(
               res,
               arrayOfChapter,
@@ -94,32 +91,34 @@ test('hasManyThrough on hasMany of one hasMany', function (assert) {
               arrayOfChapter,
               'the hasManyThrough property is a promiseArray after adding a record'
             );
-          });
-          author.get('chapters').then((res) => {
+            return author.get('chapters');
+          }).then((res) => {
             assert.deepEqual(
               res,
               arrayOfChapter,
               'the hasManyThrough property can be aliased to another property name after adding a record'
             );
+            return true;
           });
         });
       });
     });
   });
+  return wait();
 });
 
 test('hasManyThrough on hasMany of several hasMany', function (assert) {
   let store = this.store(),
     book1, book2, chapter1, chapter2, chapter3, author;
   author = this.subject();
-  Ember.run(() => {
+  run(() => {
     chapter1 = store.createRecord('chapter');
     chapter2 = store.createRecord('chapter');
     chapter3 = store.createRecord('chapter');
     book1 = store.createRecord('book');
     book2 = store.createRecord('book');
     let arrayOfChapter = [chapter1, chapter2, chapter3];
-    author.get('books').then((books) => {
+    return author.get('books').then((books) => {
       let prom = [
         book1.get('chapters').then((chapters) => {
           chapters.pushObjects([chapter1, chapter2]);
@@ -130,7 +129,7 @@ test('hasManyThrough on hasMany of several hasMany', function (assert) {
           book2.get('chaptersArray').pushObjects([chapter2, chapter3]);
         })
       ];
-      return Ember.RSVP.all(prom).then(() => {
+      return all(prom).then(() => {
         books.pushObjects([book1, book2]);
         return author.get('chapters');
       });
@@ -157,7 +156,6 @@ test('hasManyThrough on hasMany of several hasMany', function (assert) {
         3,
         'the hasManyThrough property removes duplicates from the final array'
       );
-    }).then(() => {
       return chapter1.destroyRecord();
     }).then(() => {
       return author.get('chapters');
@@ -166,15 +164,14 @@ test('hasManyThrough on hasMany of several hasMany', function (assert) {
         author.get('chapters.content'),
         [chapter2, chapter3],
         'the hasManyThrough property removes destroyed records'
-      )
+      );
       return author.get('chaptersArray');
     }).then(() => {
       assert.deepEqual(
         author.get('chaptersArray.content'),
         [chapter2, chapter3],
         'the hasManyThrough property removes destroyed records of the CP array'
-      )
-    }).then(() => {
+      );
       return chapter2.destroyRecord();
     }).then(() => {
       return author.get('chapters');
@@ -191,20 +188,22 @@ test('hasManyThrough on hasMany of several hasMany', function (assert) {
         [chapter3],
         'the hasManyThrough property removes destroyed records of the CP array'
       )
+      return true;
     });
   });
+  return wait();
 });
 
 test('hasManyThrough on hasMany of one or zero belongsTo', function (assert) {
   let store = this.store(),
     book1, book2, chapter1, chapter2, author;
   author = this.subject();
-  Ember.run(() => {
+  run(() => {
     chapter1 = store.createRecord('chapter');
     chapter2 = store.createRecord('chapter');
     book1 = store.createRecord('book');
     book2 = store.createRecord('book');
-    author.get('books').then((books) => {
+    return author.get('books').then((books) => {
       book1.set('chapter', chapter1);
       book2.set('chapter', chapter2);
       books.pushObjects([book1, book2]);
@@ -215,8 +214,6 @@ test('hasManyThrough on hasMany of one or zero belongsTo', function (assert) {
         [chapter1, chapter2],
         'the hasManyThrough property forwards the hasMany of belongsTo chapter'
       );
-      return true;
-    }).then(() => {
       return chapter1.destroyRecord();
     }).then(() => {
       return author.get('chaptersBelongsTo');
@@ -226,8 +223,6 @@ test('hasManyThrough on hasMany of one or zero belongsTo', function (assert) {
         [chapter2],
         'the hasManyThrough property removes destroyed records'
       )
-      return true;
-    }).then(() => {
       return chapter2.destroyRecord();
     }).then(() => {
       return author.get('chaptersBelongsTo');
@@ -240,13 +235,14 @@ test('hasManyThrough on hasMany of one or zero belongsTo', function (assert) {
       return true;
     });
   });
+  return wait();
 });
 
 test('hasManyThroughNonOject on hasMany of several hasMany', function (assert) {
   let store = this.store(),
     book1, book2, author;
   author = this.subject();
-  Ember.run(() => {
+  run(() => {
     book1 = store.createRecord('book');
     book2 = store.createRecord('book');
     let arrayOfChapter = ['chapter1', 'chapter2', 'chapter3'];
@@ -277,13 +273,14 @@ test('hasManyThroughNonOject on hasMany of several hasMany', function (assert) {
       )
     });
   });
+  return wait();
 });
 
 test('concat', function (assert) {
   let store = this.store(),
     chapter1, chapter2, author;
   author = this.subject();
-  Ember.run(() => {
+  run(() => {
     chapter1 = store.createRecord('book');
     chapter2 = store.createRecord('book');
     let arrayOfChapter = ['chapter1', 'chapter2', 'chapter2', 'chapter3'];
@@ -314,4 +311,5 @@ test('concat', function (assert) {
       )
     });
   });
+  return wait();
 });

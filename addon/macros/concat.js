@@ -1,5 +1,6 @@
-import Ember from 'ember';
-const {computed, assert, isArray} = Ember;
+import { computed } from '@ember/object';
+import { assert } from '@ember/debug';
+import { isArray } from '@ember/array';
 
 /**
   @method hasManyThrough
