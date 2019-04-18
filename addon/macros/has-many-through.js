@@ -18,12 +18,12 @@ export default function (...args) {
   return computed(`${childKey}.@each`, function (key) {
     childOfChildKey = childOfChildKey || key;
     let self = this,
-    observerFunction = function () {
+    observerForDeleted = function () {
       if (!self.isDestroyed) {
         self.notifyPropertyChange(key);
       }
     },
-    observerFunction2 = function () {
+    observerForRejected = function () {
       if (!self.isDestroyed) {
         self.notifyPropertyChange(key);
       }
@@ -56,15 +56,15 @@ export default function (...args) {
           children.forEach((child) => {
             // add observer for when a childOfChild is added / destroyed
             if (isBelongsTo) {
-              child.removeObserver(`${childOfChildKey}.isDeleted`, self, observerFunction);
-              child.removeObserver(`${childOfChildKey}.isRejected`, self, observerFunction2);
-              child.addObserver(`${childOfChildKey}.isRejected`, self, observerFunction2);
-              child.addObserver(`${childOfChildKey}.isDeleted`, self, observerFunction);
+              child.removeObserver(`${childOfChildKey}.isDeleted`, self, observerForDeleted);
+              child.removeObserver(`${childOfChildKey}.isRejected`, self, observerForRejected);
+              child.addObserver(`${childOfChildKey}.isRejected`, self, observerForRejected);
+              child.addObserver(`${childOfChildKey}.isDeleted`, self, observerForDeleted);
             } else {
-              child.removeObserver(`${childOfChildKey}.@each.isDeleted`, self, observerFunction);
-              child.removeObserver(`${childOfChildKey}.@each.isRejected`, self, observerFunction2);
-              child.addObserver(`${childOfChildKey}.@each.isRejected`, self, observerFunction2);
-              child.addObserver(`${childOfChildKey}.@each.isDeleted`, self, observerFunction);
+              child.removeObserver(`${childOfChildKey}.@each.isDeleted`, self, observerForDeleted);
+              child.removeObserver(`${childOfChildKey}.@each.isRejected`, self, observerForRejected);
+              child.addObserver(`${childOfChildKey}.@each.isRejected`, self, observerForRejected);
+              child.addObserver(`${childOfChildKey}.@each.isDeleted`, self, observerForDeleted);
             }
           });
           // remove duplicates
