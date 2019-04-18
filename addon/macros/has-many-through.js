@@ -22,6 +22,11 @@ export default function (...args) {
       if (!self.isDestroyed) {
         self.notifyPropertyChange(key);
       }
+    },
+    observerFunction2 = function () {
+      if (!self.isDestroyed) {
+        self.notifyPropertyChange(key);
+      }
     };
 
     return DS.PromiseArray.create({
@@ -52,9 +57,13 @@ export default function (...args) {
             // add observer for when a childOfChild is added / destroyed
             if (isBelongsTo) {
               child.removeObserver(`${childOfChildKey}.isDeleted`, self, observerFunction);
+              child.removeObserver(`${childOfChildKey}.isRejected`, self, observerFunction2);
+              child.addObserver(`${childOfChildKey}.isRejected`, self, observerFunction2);
               child.addObserver(`${childOfChildKey}.isDeleted`, self, observerFunction);
             } else {
               child.removeObserver(`${childOfChildKey}.@each.isDeleted`, self, observerFunction);
+              child.removeObserver(`${childOfChildKey}.@each.isRejected`, self, observerFunction2);
+              child.addObserver(`${childOfChildKey}.@each.isRejected`, self, observerFunction2);
               child.addObserver(`${childOfChildKey}.@each.isDeleted`, self, observerFunction);
             }
           });
