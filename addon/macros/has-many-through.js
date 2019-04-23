@@ -34,6 +34,8 @@ export default function (...args) {
         let all = [],
           res = [],
           isBelongsTo;
+        //children could be undefined for an API error, for example
+        children = children || [];
         children.forEach((child) => {
           // takes into account the case where the hasMany on the child
           // is not a promise (MF.Array for example)
@@ -57,13 +59,13 @@ export default function (...args) {
             // add observer for when a childOfChild is added / destroyed
             if (isBelongsTo) {
               child.removeObserver(`${childOfChildKey}.isDeleted`, self, observerForDeleted);
-              child.removeObserver(`${childOfChildKey}.isRejected`, self, observerForRejected);
-              child.addObserver(`${childOfChildKey}.isRejected`, self, observerForRejected);
+              //child.removeObserver(`${childOfChildKey}.isRejected`, self, observerForRejected);
+              //child.addObserver(`${childOfChildKey}.isRejected`, self, observerForRejected);
               child.addObserver(`${childOfChildKey}.isDeleted`, self, observerForDeleted);
             } else {
               child.removeObserver(`${childOfChildKey}.@each.isDeleted`, self, observerForDeleted);
-              child.removeObserver(`${childOfChildKey}.@each.isRejected`, self, observerForRejected);
-              child.addObserver(`${childOfChildKey}.@each.isRejected`, self, observerForRejected);
+              //child.removeObserver(`${childOfChildKey}.@each.isRejected`, self, observerForRejected);
+              //child.addObserver(`${childOfChildKey}.@each.isRejected`, self, observerForRejected);
               child.addObserver(`${childOfChildKey}.@each.isDeleted`, self, observerForDeleted);
             }
           });
@@ -73,6 +75,17 @@ export default function (...args) {
             && (!item.isDeleted || !item.get('isDeleted'))
             && !item.isDestroyed//ED 2.14.10
           });
+        }, (res) => {
+          children.forEach((child) => {
+            if (isBelongsTo) {
+              child.removeObserver(`${childOfChildKey}.isRejected`, self, observerForRejected);
+              child.addObserver(`${childOfChildKey}.isRejected`, self, observerForRejected);
+            } else {
+              child.removeObserver(`${childOfChildKey}.@each.isRejected`, self, observerForRejected);
+              child.addObserver(`${childOfChildKey}.@each.isRejected`, self, observerForRejected);
+            }
+          });
+          return RSVP.reject(res);
         });
       })
     });

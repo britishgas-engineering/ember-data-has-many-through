@@ -28,6 +28,8 @@ export default function (...args) {
       promise: this.get(childKey).then((children) => {
         let all = [],
           res = [];
+        //children could be undefined for an API error, for example
+        children = children || [];
         children.forEach((child) => {
           // takes into account the case where the hasMany on the child
           // is not a promise (MF.Array for example)
@@ -37,7 +39,9 @@ export default function (...args) {
 
           all.pushObject(
             prom.then((childrenOfChild) => {
-              res.pushObjects(childrenOfChild.toArray ? childrenOfChild.toArray() : [childrenOfChild]);
+              if (childrenOfChild) {
+                res.pushObjects(childrenOfChild.toArray ? childrenOfChild.toArray() : [childrenOfChild]);
+              }
             })
           );
         });
@@ -49,7 +53,7 @@ export default function (...args) {
           });
           // remove duplicates
           return res.filter(function (item, pos) {
-            return res.indexOf(item) === pos
+            return item && res.indexOf(item) === pos
             && (!item.isDeleted || !item.get('isDeleted'));
           });
         });

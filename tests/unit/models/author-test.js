@@ -19,7 +19,7 @@ let memPromise;
 let memPromise2;
 
 test('hasManyThrough on hasMany of one hasMany', function (assert) {
-  assert.expect(14);
+  assert.expect(10);
   let store = this.store(),
     chapter1, chapter2, book, author;
   author = this.subject();
@@ -104,37 +104,54 @@ test('hasManyThrough on hasMany of one hasMany', function (assert) {
               arrayOfChapter,
               'the hasManyThrough property can be aliased to another property name after adding a record'
             );
-            const promise = RSVP.reject();
-            memPromise = book.get('chapters.promise');
-            book.get('chapters').set('promise', DS.PromiseArray.create({promise}));
-            const promise2 = RSVP.reject();
-            memPromise2 = book.get('chapter.promise');
-            book.get('chapter').set('promise', DS.PromiseObject.create({promise: promise2}));
-            book.set('chapters.isFulfilled', false);
-            book.set('chapter.isFulfilled', false);
-            book.set('chapters.isRejected', true);
-            book.set('chapter.isRejected', true);
-            return book.get('chapters');
-          }).catch(() => {
-            return author.get('chapters').reload();
-          }).catch(() => {
-            assert.ok(true, 'hasManyThrough updates to rejected when one childofchild hasMany promise rejects');
-            return author.get('chapter').reload();
-          }).catch(() => {
-            assert.ok(true, 'hasManyThrough updates to rejected when one childofchild belgonsTo promise rejects');
-            book.get('chapters').set('promise', memPromise);
-            book.get('chapter').set('promise', memPromise2);
-            book.set('chapters.isFulfilled', true);
-            book.set('chapter.isFulfilled', true);
-            book.set('chapters.isRejected', false);
-            book.set('chapter.isRejected', false);
-            return [author.get('chapters'), author.get('chapter')];
-          }).then(() => {
-            assert.ok(true, 'hasManyThrough updates to fulfilled when one childofchild hasMany promise goes from reject to fulfill');
-            assert.ok(true, 'hasManyThrough updates to fulfilled when one childofchild belongsTo promise goes from reject to fulfill');
           });
         });
       });
+    });
+  });
+  return wait();
+});
+
+test('hasManyThrough on hasMany of one hasMany, promises failing initially', function (assert) {
+  assert.expect(4);
+  let store = this.store(), book, author;
+  author = this.subject();
+  run(() => {
+    book = store.createRecord('book');
+    return author.get('books').then((books) => {
+      books.pushObject(book);
+      return author.get('books');
+    }).then(() => {
+      const promise = RSVP.reject();
+      memPromise = book.get('chapters.promise');
+      book.get('chapters').set('promise', DS.PromiseArray.create({promise}));
+      book.set('chapters.isFulfilled', false);
+      book.set('chapters.isRejected', true);
+      const promise2 = RSVP.reject();
+      memPromise2 = book.get('chapter.promise');
+      book.get('chapter').set('promise', DS.PromiseObject.create({promise: promise2}));
+      book.set('chapter.isFulfilled', false);
+      book.set('chapter.isRejected', true);
+      return book.get('chapters');
+    }).catch(() => {
+      return book.get('chapter');
+    }).catch(() => {
+      return author.get('chapters');
+    }).catch(() => {
+      assert.ok(true, 'hasManyThrough updates to rejected when one childofchild hasMany promise rejects');
+      return author.get('chaptersBelongsTo');
+    }).catch(() => {
+      assert.ok(true, 'hasManyThrough updates to rejected when one childofchild belongsTo promise rejects');
+      book.get('chapters').set('promise', memPromise);
+      book.get('chapter').set('promise', memPromise2);
+      book.set('chapters.isFulfilled', true);
+      book.set('chapter.isFulfilled', true);
+      book.set('chapters.isRejected', false);
+      book.set('chapter.isRejected', false);
+      return [author.get('chapters'), author.get('chapter')];
+    }).then(() => {
+      assert.ok(true, 'hasManyThrough updates to fulfilled when one childofchild hasMany promise goes from reject to fulfill');
+      assert.ok(true, 'hasManyThrough updates to fulfilled when one childofchild belongsTo promise goes from reject to fulfill');
     });
   });
   return wait();
