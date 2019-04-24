@@ -18,7 +18,12 @@ export default function (...args) {
   return computed(`${childKey}.@each`, function (key) {
     childOfChildKey = childOfChildKey || key;
     let self = this,
-    observerFunction = function () {
+    observerForDeleted = function () {
+      if (!self.isDestroyed) {
+        self.notifyPropertyChange(key);
+      }
+    },
+    observerForRejected = function () {
       if (!self.isDestroyed) {
         self.notifyPropertyChange(key);
       }
@@ -29,6 +34,8 @@ export default function (...args) {
         let all = [],
           res = [],
           isBelongsTo;
+        //children could be undefined for an API error, for example
+        children = children || [];
         children.forEach((child) => {
           // takes into account the case where the hasMany on the child
           // is not a promise (MF.Array for example)
@@ -51,11 +58,15 @@ export default function (...args) {
           children.forEach((child) => {
             // add observer for when a childOfChild is added / destroyed
             if (isBelongsTo) {
-              child.removeObserver(`${childOfChildKey}.isDeleted`, self, observerFunction);
-              child.addObserver(`${childOfChildKey}.isDeleted`, self, observerFunction);
+              child.removeObserver(`${childOfChildKey}.isDeleted`, self, observerForDeleted);
+              //child.removeObserver(`${childOfChildKey}.isRejected`, self, observerForRejected);
+              //child.addObserver(`${childOfChildKey}.isRejected`, self, observerForRejected);
+              child.addObserver(`${childOfChildKey}.isDeleted`, self, observerForDeleted);
             } else {
-              child.removeObserver(`${childOfChildKey}.@each.isDeleted`, self, observerFunction);
-              child.addObserver(`${childOfChildKey}.@each.isDeleted`, self, observerFunction);
+              child.removeObserver(`${childOfChildKey}.@each.isDeleted`, self, observerForDeleted);
+              //child.removeObserver(`${childOfChildKey}.@each.isRejected`, self, observerForRejected);
+              //child.addObserver(`${childOfChildKey}.@each.isRejected`, self, observerForRejected);
+              child.addObserver(`${childOfChildKey}.@each.isDeleted`, self, observerForDeleted);
             }
           });
           // remove duplicates
@@ -64,6 +75,17 @@ export default function (...args) {
             && (!item.isDeleted || !item.get('isDeleted'))
             && !item.isDestroyed//ED 2.14.10
           });
+        }, (res) => {
+          children.forEach((child) => {
+            if (isBelongsTo) {
+              child.removeObserver(`${childOfChildKey}.isRejected`, self, observerForRejected);
+              child.addObserver(`${childOfChildKey}.isRejected`, self, observerForRejected);
+            } else {
+              child.removeObserver(`${childOfChildKey}.@each.isRejected`, self, observerForRejected);
+              child.addObserver(`${childOfChildKey}.@each.isRejected`, self, observerForRejected);
+            }
+          });
+          return RSVP.reject(res);
         });
       })
     });

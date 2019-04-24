@@ -5,6 +5,8 @@ import {
   test
 } from 'ember-qunit';
 import wait from 'ember-test-helpers/wait';
+import RSVP from 'rsvp';
+import DS from 'ember-data';
 
 moduleForModel('author', 'Unit | Model | author', {
   needs: [
@@ -13,7 +15,11 @@ moduleForModel('author', 'Unit | Model | author', {
   ]
 });
 
+let memPromise;
+let memPromise2;
+
 test('hasManyThrough on hasMany of one hasMany', function (assert) {
+  assert.expect(10);
   let store = this.store(),
     chapter1, chapter2, book, author;
   author = this.subject();
@@ -28,9 +34,9 @@ test('hasManyThrough on hasMany of one hasMany', function (assert) {
         chapters.pushObjects(arrayOfChapter);
         book.get('chaptersArray').pushObjects(arrayOfChapter);
         books.pushObject(book);
-        return author.get('chapters').then((res) => {
+        return author.get('chapters').then((chapters) => {
           assert.deepEqual(
-            res,
+            chapters,
             arrayOfChapter,
             'the hasManyThrough property forwards the hasMany of one hasMany book'
           );
@@ -40,9 +46,9 @@ test('hasManyThrough on hasMany of one hasMany', function (assert) {
             'the hasManyThrough property is a promiseArray'
           );
           return author.get('chaptersArray');
-        }).then((res) => {
+        }).then((chaptersArray) => {
           assert.deepEqual(
-            res,
+            chaptersArray,
             arrayOfChapter,
             'the hasManyThrough property forwards the CP array of one hasMany book'
           );
@@ -52,25 +58,25 @@ test('hasManyThrough on hasMany of one hasMany', function (assert) {
             'the hasManyThrough property is a promiseArray'
           );
           return author.get('chapters');
-        }).then((res) => {
+        }).then((chapters) => {
           assert.deepEqual(
-            res,
+            chapters,
             arrayOfChapter,
             'the hasManyThrough property can be aliased to another property name'
           );
           return all([
             author.get('chapters'),
-            author.get('chaptersArray'),
-            author.get('chapters')
+            author.get('chaptersArray')
           ]);
         }).then(() => {
+
           const arrayOfChapter = [chapter1, chapter2];
           chapters.pushObjects(arrayOfChapter);
           book.get('chaptersArray').pushObjects(arrayOfChapter);
           books.pushObject(book);
-          return author.get('chapters').then((res) => {
+          return author.get('chapters').then((chapters) => {
             assert.deepEqual(
-              res,
+              chapters,
               arrayOfChapter,
               'the hasManyThrough property forwards the hasMany of one hasMany book after adding a record'
             );
@@ -80,9 +86,9 @@ test('hasManyThrough on hasMany of one hasMany', function (assert) {
               'the hasManyThrough property is a promiseArray after adding a record'
             );
             return author.get('chaptersArray');
-          }).then((res) => {
+          }).then((chaptersArray) => {
             assert.deepEqual(
-              res,
+              chaptersArray,
               arrayOfChapter,
               'the hasManyThrough property forwards the CP array of one hasMany book after adding a record'
             );
@@ -92,16 +98,60 @@ test('hasManyThrough on hasMany of one hasMany', function (assert) {
               'the hasManyThrough property is a promiseArray after adding a record'
             );
             return author.get('chapters');
-          }).then((res) => {
+          }).then((chapters) => {
             assert.deepEqual(
-              res,
+              chapters,
               arrayOfChapter,
               'the hasManyThrough property can be aliased to another property name after adding a record'
             );
-            return true;
           });
         });
       });
+    });
+  });
+  return wait();
+});
+
+test('hasManyThrough on hasMany of one hasMany, promises failing initially', function (assert) {
+  assert.expect(4);
+  let store = this.store(), book, author;
+  author = this.subject();
+  run(() => {
+    book = store.createRecord('book');
+    return author.get('books').then((books) => {
+      books.pushObject(book);
+      return author.get('books');
+    }).then(() => {
+      const promise = RSVP.reject();
+      memPromise = book.get('chapters.promise');
+      book.get('chapters').set('promise', DS.PromiseArray.create({promise}));
+      book.set('chapters.isFulfilled', false);
+      book.set('chapters.isRejected', true);
+      const promise2 = RSVP.reject();
+      memPromise2 = book.get('chapter.promise');
+      book.get('chapter').set('promise', DS.PromiseObject.create({promise: promise2}));
+      book.set('chapter.isFulfilled', false);
+      book.set('chapter.isRejected', true);
+      return book.get('chapters');
+    }).catch(() => {
+      return book.get('chapter');
+    }).catch(() => {
+      return author.get('chapters');
+    }).catch(() => {
+      assert.ok(true, 'hasManyThrough updates to rejected when one childofchild hasMany promise rejects');
+      return author.get('chaptersBelongsTo');
+    }).catch(() => {
+      assert.ok(true, 'hasManyThrough updates to rejected when one childofchild belongsTo promise rejects');
+      book.get('chapters').set('promise', memPromise);
+      book.get('chapter').set('promise', memPromise2);
+      book.set('chapters.isFulfilled', true);
+      book.set('chapter.isFulfilled', true);
+      book.set('chapters.isRejected', false);
+      book.set('chapter.isRejected', false);
+      return [author.get('chapters'), author.get('chapter')];
+    }).then(() => {
+      assert.ok(true, 'hasManyThrough updates to fulfilled when one childofchild hasMany promise goes from reject to fulfill');
+      assert.ok(true, 'hasManyThrough updates to fulfilled when one childofchild belongsTo promise goes from reject to fulfill');
     });
   });
   return wait();
