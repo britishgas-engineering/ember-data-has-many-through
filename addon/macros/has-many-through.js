@@ -1,6 +1,7 @@
 import { computed } from '@ember/object';
 import RSVP from 'rsvp';
 import DS from 'ember-data';
+import { assert } from '@ember/debug';
 
 /**
   @method hasManyThrough
@@ -39,6 +40,10 @@ export default function (...args) {
         children.forEach((child) => {
           // takes into account the case where the hasMany on the child
           // is not a promise (MF.Array for example)
+          assert(
+            `${child.constructor.modelName}.get('${childOfChildKey}') is undefined while it should be a PromiseArray (in hasManyThrough this.get('${childKey}') of ${this.constructor.modelName})`,
+            child.get(childOfChildKey)
+          );
           let prom = child.get(childOfChildKey).then
             ? child.get(childOfChildKey)
             : RSVP.resolve(child.get(childOfChildKey));
