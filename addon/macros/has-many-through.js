@@ -36,7 +36,7 @@ export default function (...args) {
           // takes into account the case where the hasMany on the child
           // is not a promise (MF.Array for example)
           // or undefined (just a property returning null)
-          const childOfChildIsPromise = child && child.get(childOfChildKey).then;
+          const childOfChildIsPromise = child.get(childOfChildKey) && child.get(childOfChildKey).then;
           let prom = childOfChildIsPromise ?
             child.get(childOfChildKey) :
             RSVP.resolve(child.get(childOfChildKey));
