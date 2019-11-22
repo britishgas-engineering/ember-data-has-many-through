@@ -288,7 +288,7 @@ test('hasManyThrough on hasMany of one or zero belongsTo', function (assert) {
   return wait();
 });
 
-test('hasManyThroughNonOject on hasMany of several hasMany', function (assert) {
+test('hasManyThrough on hasMany of several non promise hasMany', function (assert) {
   let store = this.store(),
     book1, book2, author;
   author = this.subject();
@@ -305,12 +305,12 @@ test('hasManyThroughNonOject on hasMany of several hasMany', function (assert) {
       assert.deepEqual(
         res,
         arrayOfChapter,
-        'the hasManyThroughNonObject property forwards the hasMany of two hasMany books'
+        'the hasManyThrough property forwards the hasMany of two hasMany books'
       );
       assert.equal(
         res.get('length'),
         3,
-        'the hasManyThroughNonObject property removes duplicates from the final array'
+        'the hasManyThrough property removes duplicates from the final array'
       );
     }).then(() => {
         book1.get('simpleArray').removeObject('chapter1');
