@@ -1,10 +1,12 @@
-'use strict';
+/* global require, module */
 
-const EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
+var EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
 
 module.exports = function(defaults) {
-  let app = new EmberAddon(defaults, {
-    // Add options here
+  var app = new EmberAddon(defaults, {
+    'ember-cli-babel': { //https://stackoverflow.com/a/44632749/4325661
+        includePolyfill: true
+    }
   });
 
   /*
