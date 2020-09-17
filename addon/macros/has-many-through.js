@@ -56,19 +56,13 @@ export default function (...args) {
           children.forEach((child) => {
             // add observer for when a childOfChild is added / destroyed
             if (isBelongsTo) {
-              child.removeObserver(`${childOfChildKey}.isDeleted`, self, observerForChildOfChild);
-              //child.removeObserver(`${childOfChildKey}.isRejected`, self, observerForRejected);
-              //child.addObserver(`${childOfChildKey}.isRejected`, self, observerForRejected);
+              //child.removeObserver(`${childOfChildKey}.isDeleted`, self, observerForChildOfChild);
               child.addObserver(`${childOfChildKey}.isDeleted`, self, observerForChildOfChild);
             } else if (child.get(`${childOfChildKey}.firstObject`) instanceof EmberObject) {
-              child.removeObserver(`${childOfChildKey}.@each.isDeleted`, self, observerForChildOfChild);
-              //child.removeObserver(`${childOfChildKey}.@each.isRejected`, self, observerForRejected);
-              //child.addObserver(`${childOfChildKey}.@each.isRejected`, self, observerForRejected);
+              //child.removeObserver(`${childOfChildKey}.@each.isDeleted`, self, observerForChildOfChild);
               child.addObserver(`${childOfChildKey}.@each.isDeleted`, self, observerForChildOfChild);
             } else {
-              child.removeObserver(`${childOfChildKey}.[]`, self, observerForChildOfChild);
-              //child.removeObserver(`${childOfChildKey}.@each.isRejected`, self, observerForRejected);
-              //child.addObserver(`${childOfChildKey}.@each.isRejected`, self, observerForRejected);
+              //child.removeObserver(`${childOfChildKey}.[]`, self, observerForChildOfChild);
               child.addObserver(`${childOfChildKey}.[]`, self, observerForChildOfChild);
             }
           });
@@ -81,10 +75,10 @@ export default function (...args) {
         }, (res) => {
           children.forEach((child) => {
             if (isBelongsTo) {
-              child.removeObserver(`${childOfChildKey}.isRejected`, self, observerForChildOfChild);
+              //child.removeObserver(`${childOfChildKey}.isRejected`, self, observerForChildOfChild);
               child.addObserver(`${childOfChildKey}.isRejected`, self, observerForChildOfChild);
             } else {
-              child.removeObserver(`${childOfChildKey}.@each.isRejected`, self, observerForChildOfChild);
+              //child.removeObserver(`${childOfChildKey}.@each.isRejected`, self, observerForChildOfChild);
               child.addObserver(`${childOfChildKey}.@each.isRejected`, self, observerForChildOfChild);
             }
           });
