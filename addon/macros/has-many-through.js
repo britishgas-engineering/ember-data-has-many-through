@@ -54,6 +54,9 @@ export default function (...args) {
         });
         return RSVP.all(all).then(() => {
           children.forEach((child) => {
+            if (child.isDestroyed || child.isDestroying) {
+              return true;
+            }
             // add observer for when a childOfChild is added / destroyed
             if (isBelongsTo) {
               //child.removeObserver(`${childOfChildKey}.isDeleted`, self, observerForChildOfChild);
