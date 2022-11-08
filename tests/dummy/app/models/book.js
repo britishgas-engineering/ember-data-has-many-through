@@ -1,5 +1,5 @@
 import DS from 'ember-data';
-import {A} from '@ember/array';
+import { A } from '@ember/array';
 
 export default DS.Model.extend({
   chapters: DS.hasMany('chapter', {inverse: 'isChaptersOf'}),

@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Ember-data-has-many-through
+=======
+# ember-data-has-many-through
+>>>>>>> 5aae312 (v3.12.0...v4.8.0)
 
 A small Addon to concatenate array of arrays, including promiseArrays / Ember Data hasMany relationships, it provides three macros:
 * `concat` allows to concatenate arrays of Ember Objects containing arrays.
@@ -7,12 +11,20 @@ A small Addon to concatenate array of arrays, including promiseArrays / Ember Da
 
 ## concat
 
+<<<<<<< HEAD
 This is the standard transposition of javascript's `concat` method to Ember arrays:
 
 ``````javascript
 // models/parent.js
 import DS from 'ember-data';
 import concat from 'dummy/macros/concat';
+=======
+## Compatibility
+
+* Ember.js v3.28 or above
+* Ember CLI v3.28 or above
+* Node.js v14 or above
+>>>>>>> 5aae312 (v3.12.0...v4.8.0)
 
 export default DS.Model.extend({
   children: DS.hasMany('child'),
@@ -22,9 +34,13 @@ export default DS.Model.extend({
 });
 ``````
 
+<<<<<<< HEAD
 ``````javascript
 // models/child.js
 import DS from 'ember-data';
+=======
+## Installation
+>>>>>>> 5aae312 (v3.12.0...v4.8.0)
 
 export default DS.Model.extend({
   filterMe: true,
@@ -34,9 +50,13 @@ export default DS.Model.extend({
 
 ## hasManyThroughNonObject
 
+<<<<<<< HEAD
 Given an Ember-Data `parent` model with a hasMany `children` relationship on a `child` model that has a `simpleArray` Ember array,
 then you can use the `hasManyThroughNonObject` computed property provided by this addon to concatenate all the `simpleArray` of `child` models
 into a single `simpleArray` property on the `parent` model.
+=======
+## Usage
+>>>>>>> 5aae312 (v3.12.0...v4.8.0)
 
 ``````javascript
 // models/parent.js
@@ -50,9 +70,13 @@ export default DS.Model.extend({
 });
 ``````
 
+<<<<<<< HEAD
 ``````javascript
 // models/child.js
 import DS from 'ember-data';
+=======
+## Contributing
+>>>>>>> 5aae312 (v3.12.0...v4.8.0)
 
 export default DS.Model.extend({
   simpleArray: []
@@ -61,9 +85,13 @@ export default DS.Model.extend({
 
 ## hasManyThrough
 
+<<<<<<< HEAD
 Given an Ember-Data `parent` model with a hasMany `children` relationship on a `child` model that itself has a hasMany `childrenOfChild` 
 relationship (or a `childrenOfChildArray` standard array), then you can use the `hasManyThrough` computed property provided by this addon to 
 concatenate all the `childrenOfChild` of child models into a single `childrenOfChild` property on the `parent` model.
+=======
+## License
+>>>>>>> 5aae312 (v3.12.0...v4.8.0)
 
 ``````javascript
 // models/parent.js
