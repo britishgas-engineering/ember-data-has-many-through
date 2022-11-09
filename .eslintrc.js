@@ -7,19 +7,24 @@ module.exports = {
     ecmaVersion: 2018,
     sourceType: 'module',
     ecmaFeatures: {
-      legacyDecorators: true,
-    },
+      legacyDecorators: true
+    }
   },
-  plugins: ['ember'],
+  plugins: [
+    'ember'
+  ],
   extends: [
     'eslint:recommended',
-    'plugin:ember/recommended',
-    'plugin:prettier/recommended',
+    'plugin:ember/recommended'
   ],
   env: {
-    browser: true,
+    browser: true
   },
-  rules: {},
+  rules: {
+    'ember/no-classic-classes': 'warn',
+    'ember/no-observers': 'warn',
+    'ember/use-ember-data-rfc-395-imports': 'warn',
+  },
   overrides: [
     // node files
     {
@@ -33,21 +38,22 @@ module.exports = {
         './blueprints/*/index.js',
         './config/**/*.js',
         './tests/dummy/config/**/*.js',
+        './tests/.eslintrc.js'
       ],
       parserOptions: {
-        sourceType: 'script',
+        sourceType: 'script'
       },
       env: {
         browser: false,
-        node: true,
+        node: true
       },
       plugins: ['node'],
-      extends: ['plugin:node/recommended'],
+      extends: ['plugin:node/recommended']
     },
     {
-      // test files
+      // Test files:
       files: ['tests/**/*-test.{js,ts}'],
-      extends: ['plugin:qunit/recommended'],
-    },
+      extends: ['plugin:qunit/recommended']
+    }
   ],
 };
