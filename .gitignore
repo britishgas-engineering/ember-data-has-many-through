@@ -20,11 +20,6 @@ testem.log
 jsconfig.json
 
 # ember-try
-<<<<<<< HEAD
-.node_modules.ember-try/
-bower.json.ember-try
-package.json.ember-try
-=======
 /.node_modules.ember-try/
 /bower.json.ember-try
 /npm-shrinkwrap.json.ember-try
@@ -34,4 +29,3 @@ package.json.ember-try
 
 # broccoli-debug
 /DEBUG/
->>>>>>> 5aae312 (v3.12.0...v4.8.0)
