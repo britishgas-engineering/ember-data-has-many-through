@@ -36,58 +36,90 @@ export default function (...args) {
           // takes into account the case where the hasMany on the child
           // is not a promise (MF.Array for example)
           // or undefined (just a property returning null)
-          const childOfChildIsPromise = child.get(childOfChildKey) && child.get(childOfChildKey).then;
-          let prom = childOfChildIsPromise ?
-            child.get(childOfChildKey) :
-            RSVP.resolve(child.get(childOfChildKey));
+          const childOfChildIsPromise =
+            child.get(childOfChildKey) && child.get(childOfChildKey).then;
+          let prom = childOfChildIsPromise
+            ? child.get(childOfChildKey)
+            : RSVP.resolve(child.get(childOfChildKey));
 
           all.pushObject(
             prom.then((childrenOfChild) => {
               if (childrenOfChild) {
                 isBelongsTo = !childrenOfChild.toArray;
-                res.pushObjects(isBelongsTo ? [childrenOfChild] : childrenOfChild.toArray());
+                res.pushObjects(
+                  isBelongsTo ? [childrenOfChild] : childrenOfChild.toArray()
+                );
               } else {
-                isBelongsTo=true;
+                isBelongsTo = true;
               }
             })
           );
         });
-        return RSVP.all(all).then(() => {
-          children.forEach((child) => {
-            if (child.isDestroyed || child.isDestroying) {
-              return true;
-            }
-            // add observer for when a childOfChild is added / destroyed
-            if (isBelongsTo) {
-              //child.removeObserver(`${childOfChildKey}.isDeleted`, self, observerForChildOfChild);
-              child.addObserver(`${childOfChildKey}.isDeleted`, self, observerForChildOfChild);
-            } else if (child.get(`${childOfChildKey}.firstObject`) instanceof EmberObject) {
-              //child.removeObserver(`${childOfChildKey}.@each.isDeleted`, self, observerForChildOfChild);
-              child.addObserver(`${childOfChildKey}.@each.isDeleted`, self, observerForChildOfChild);
-            } else {
-              //child.removeObserver(`${childOfChildKey}.[]`, self, observerForChildOfChild);
-              child.addObserver(`${childOfChildKey}.[]`, self, observerForChildOfChild);
-            }
-          });
-          // remove duplicates
-          return res.filter(function (item, pos) {
-            return item && res.indexOf(item) === pos
-            && (!item.isDeleted || !item.get('isDeleted'))
-            && !item.isDestroyed//ED 2.14.10
-          });
-        }, (res) => {
-          children.forEach((child) => {
-            if (isBelongsTo) {
-              //child.removeObserver(`${childOfChildKey}.isRejected`, self, observerForChildOfChild);
-              child.addObserver(`${childOfChildKey}.isRejected`, self, observerForChildOfChild);
-            } else {
-              //child.removeObserver(`${childOfChildKey}.@each.isRejected`, self, observerForChildOfChild);
-              child.addObserver(`${childOfChildKey}.@each.isRejected`, self, observerForChildOfChild);
-            }
-          });
-          return RSVP.reject(res);
-        });
-      })
+        return RSVP.all(all).then(
+          () => {
+            children.forEach((child) => {
+              if (child.isDestroyed || child.isDestroying) {
+                return true;
+              }
+              // add observer for when a childOfChild is added / destroyed
+              if (isBelongsTo) {
+                //child.removeObserver(`${childOfChildKey}.isDeleted`, self, observerForChildOfChild);
+                child.addObserver(
+                  `${childOfChildKey}.isDeleted`,
+                  self,
+                  observerForChildOfChild
+                );
+              } else if (
+                child.get(`${childOfChildKey}.firstObject`) instanceof
+                EmberObject
+              ) {
+                //child.removeObserver(`${childOfChildKey}.@each.isDeleted`, self, observerForChildOfChild);
+                child.addObserver(
+                  `${childOfChildKey}.@each.isDeleted`,
+                  self,
+                  observerForChildOfChild
+                );
+              } else {
+                //child.removeObserver(`${childOfChildKey}.[]`, self, observerForChildOfChild);
+                child.addObserver(
+                  `${childOfChildKey}.[]`,
+                  self,
+                  observerForChildOfChild
+                );
+              }
+            });
+            // remove duplicates
+            return res.filter(function (item, pos) {
+              return (
+                item &&
+                res.indexOf(item) === pos &&
+                (!item.isDeleted || !item.get('isDeleted')) &&
+                !item.isDestroyed
+              ); //ED 2.14.10
+            });
+          },
+          (res) => {
+            children.forEach((child) => {
+              if (isBelongsTo) {
+                //child.removeObserver(`${childOfChildKey}.isRejected`, self, observerForChildOfChild);
+                child.addObserver(
+                  `${childOfChildKey}.isRejected`,
+                  self,
+                  observerForChildOfChild
+                );
+              } else {
+                //child.removeObserver(`${childOfChildKey}.@each.isRejected`, self, observerForChildOfChild);
+                child.addObserver(
+                  `${childOfChildKey}.@each.isRejected`,
+                  self,
+                  observerForChildOfChild
+                );
+              }
+            });
+            return RSVP.reject(res);
+          }
+        );
+      }),
     });
   });
 }
