@@ -1,10 +1,10 @@
 import { filterBy } from '@ember/object/computed';
-import DS from 'ember-data';
+import Model, { hasMany } from '@ember-data/model';
 import hasManyThrough from 'dummy/macros/has-many-through';
 import concat from 'dummy/macros/concat';
 
-export default DS.Model.extend({
-  books: DS.hasMany('book'),
+export default Model.extend({
+  books: hasMany('book'),
   chapters: hasManyThrough('books'),
   chaptersBelongsTo: hasManyThrough('books', 'chapter'),
   chaptersArray: hasManyThrough('books'),
