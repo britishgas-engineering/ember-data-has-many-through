@@ -1,7 +1,9 @@
 import { computed } from '@ember/object';
 import RSVP from 'rsvp';
-import DS from 'ember-data';
 import EmberObject from '@ember/object';
+import ArrayProxy from '@ember/array/proxy';
+import { reads } from '@ember/object/computed';
+import PromiseProxyMixin from '@ember/object/promise-proxy-mixin';
 
 /**
   @method hasManyThrough
@@ -25,7 +27,11 @@ export default function (...args) {
       }
     };
 
-    return DS.PromiseArray.create({
+    const PromiseArray = ArrayProxy.extend(PromiseProxyMixin, {
+      meta: reads('content.meta'),
+    });
+
+    return PromiseArray.create({
       promise: this.get(childKey).then((children) => {
         const all = [];
         const res = [];

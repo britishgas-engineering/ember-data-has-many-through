@@ -1,6 +1,6 @@
-import DS from 'ember-data';
+import Model, { belongsTo } from '@ember-data/model';
 
-export default DS.Model.extend({
-  isChaptersOf: DS.belongsTo('book', {inverse: 'chapters'}),
-  isChapterOf: DS.belongsTo('book', {inverse: 'chapter'})
+export default Model.extend({
+  isChaptersOf: belongsTo('book', {inverse: 'chapters'}),
+  isChapterOf: belongsTo('book', {inverse: 'chapter'})
 });

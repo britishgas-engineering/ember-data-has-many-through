@@ -5,7 +5,10 @@ import { settled } from '@ember/test-helpers';
 import { all } from 'rsvp';
 import { run } from '@ember/runloop';
 import RSVP from 'rsvp';
-import DS from 'ember-data';
+import ArrayProxy from '@ember/array/proxy';
+import { reads } from '@ember/object/computed';
+import PromiseProxyMixin from '@ember/object/promise-proxy-mixin';
+import ObjectProxy from '@ember/object/proxy';
 
 let memPromise;
 let memPromise2;
@@ -118,6 +121,12 @@ module('Unit | Model | author', function (hooks) {
   test('hasManyThrough on hasMany of one hasMany, promises failing initially', function (assert) {
     assert.expect(4);
 
+    const PromiseArray = ArrayProxy.extend(PromiseProxyMixin, {
+      meta: reads('content.meta'),
+    });
+
+    const PromiseObject = ObjectProxy.extend(PromiseProxyMixin);
+
     let store = this.owner.lookup('service:store'),
       book,
       author;
@@ -135,14 +144,14 @@ module('Unit | Model | author', function (hooks) {
           memPromise = book.get('chapters.promise');
           book
             .get('chapters')
-            .set('promise', DS.PromiseArray.create({ promise }));
+            .set('promise', PromiseArray.create({ promise }));
           book.set('chapters.isFulfilled', false);
           book.set('chapters.isRejected', true);
           const promise2 = RSVP.reject();
           memPromise2 = book.get('chapter.promise');
           book
             .get('chapter')
-            .set('promise', DS.PromiseObject.create({ promise: promise2 }));
+            .set('promise', PromiseObject.create({ promise: promise2 }));
           book.set('chapter.isFulfilled', false);
           book.set('chapter.isRejected', true);
           return book.get('chapters');

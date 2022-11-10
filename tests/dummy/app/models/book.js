@@ -1,9 +1,9 @@
-import DS from 'ember-data';
+import Model, { hasMany, belongsTo } from '@ember-data/model';
 import { A } from '@ember/array';
 
-export default DS.Model.extend({
-  chapters: DS.hasMany('chapter', {inverse: 'isChaptersOf'}),
-  chapter: DS.belongsTo('chapter', {inverse: 'isChapterOf'}),
+export default Model.extend({
+  chapters: hasMany('chapter', {inverse: 'isChaptersOf'}),
+  chapter: belongsTo('chapter', {inverse: 'isChapterOf'}),
   chaptersArray: A(),
   simpleArray: A(),
   filterMe: true,
