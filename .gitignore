@@ -29,3 +29,6 @@ jsconfig.json
 
 # broccoli-debug
 /DEBUG/
+
+# github
+/.github
