@@ -32,9 +32,9 @@ export default function (...args) {
     });
 
     return PromiseArray.create({
-      promise: this.get(childKey).then((children) => {
-        const all = [];
-        const res = [];
+      promise: this.get(childKey).then((children: Array<any>) => {
+        const all: any = [];
+        const res: any = [];
         let isBelongsTo;
         //children could be undefined for an API error, for example
         children = children || [];
@@ -63,7 +63,7 @@ export default function (...args) {
         });
         return RSVP.all(all).then(
           () => {
-            children.forEach((child) => {
+            children.forEach((child: any) => {
               if (child.isDestroyed || child.isDestroying) {
                 return true;
               }
