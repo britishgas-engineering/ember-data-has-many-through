@@ -35,7 +35,7 @@ export default function (...args) {
       promise: this.get(childKey).then((children: Array<any>) => {
         const all: any = [];
         const res: any = [];
-        let isBelongsTo;
+        let isBelongsTo: boolean;
         //children could be undefined for an API error, for example
         children = children || [];
         children.forEach((child) => {

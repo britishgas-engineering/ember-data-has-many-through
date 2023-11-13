@@ -7,16 +7,6 @@
     // work with TypeScript.
     "baseUrl": ".",
     "noImplicitAny": false,
-    "strict": false,
-    "noUncheckedIndexedAccess": true,
-
-    // You should feel free to change these, especially if you are already
-    // covering them via linting (e.g. with @typescript-eslint).
-    "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": false,
-    "noPropertyAccessFromIndexSignature": true,
     "paths": {
       "dummy/tests/*": [
         "tests/*"
