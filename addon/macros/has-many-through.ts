@@ -95,7 +95,7 @@ export default function (...args) {
               }
             });
             // remove duplicates
-            return res.filter(function (item, pos) {
+            return res.filter(function (item, pos: number) {
               return (
                 item &&
                 res.indexOf(item) === pos &&
