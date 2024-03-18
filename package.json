@@ -1,6 +1,6 @@
 {
   "name": "ember-data-has-many-through",
-  "version": "4.0.1",
+  "version": "5.0.0",
   "description": "A small Addon to forward hasMany of hasMany relationships to the grand-parent.",
   "peerDependencies": {
     "ember-source": "^4.0.0"
